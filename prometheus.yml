@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 15s      # it means it will keep pulling the data from the sources or targets every 15 seconds 
+  evaluation_interval: 15s   # in every 15 seconds the data would be evaluated and stored in the D.B
+
+# Alertmanager configuration (it means if any wrong happens so it will send an alert to the port number 9093)  [ we are not using alerts right now so we comment it out ]
+#alerting:
+#  alertmanagers:
+#    - static_configs:
+#        - targets:
+#            - alertmanager:9093
+
+# Load rules once and periodically evaluate them
+#rule_files:                   # if you have any rules then you can keep it inside the rule file 
+#  - "rules/*.yml"
+
+# Scrape configurations
+scrape_configs:
+  - job_name: "prometheus"  # with the help of prometheus we are scraping our own data that is why our target is [localhost]
+    static_configs:
+      - targets: ["localhost:9090"]  # it is the (URL=localhost:9090) from where you want to scrape the data
+
+  - job_name: "node-exporter" # it scrape the data from the node or ec2 instance
+    static_configs:
+      - targets: ["node-exporter:9100"]  # you can tell where the node exporter is running and scrape the data
+
+  - job_name: "cadvisor"  # cadvisor is a tool that can scan the container data and scrape it 
+    static_configs:
+      - targets: ["cadvisor:8080"]  # you can tell or point where the cadvisor is running and scrape the data
