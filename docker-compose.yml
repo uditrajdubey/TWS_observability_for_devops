@@ -1,1 +1,23 @@
+services:
+  prometheus:
+    image: prom/prometheus:latest  # name of the prometheus image 
+    container_name: prometheus  # name of the docker container
+    volumes:
+      - ./prometheus:/etc/prometheus  # we are connecting here cuurent folder prometheus to a prometheus folder in which prometheus config file is stored(i.e prometheus.yml)
+      - prometheus_data:/prometheus  # this prometheus data is a type of named volume in docker container
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+      - "--web.enable-lifecycle"
+    ports:
+      - "9090:9090"
+    networks:
+      - monitoring
+    restart: always # it means if docker re-starts it will always automatically starts 
 
+networks:
+  monitoring:
+volumes:
+  prometheus_data:
