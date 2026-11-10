@@ -64,6 +64,28 @@ services:
     networks:
       - monitoring
     restart: always
+    
+   # --- OpenTelemetry Collector: receives all telemetry, routes it to the right backend ---
+
+   
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.163.2
+    container_name: otel-collector
+    command: ["--config=/etc/otelcol-contrib/config.yaml"]
+    volumes:
+      - ./otel-collector/otel-collector-config.yml:/etc/otelcol-contrib/config.yaml:ro
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+    expose:
+      - 8889          # app metrics (Prometheus scrapes here)
+      - 8888          # the Collector's own metrics (Prometheus scrapes here)
+    depends_on:
+      - loki
+      - tempo
+    networks:
+      - monitoring
+    restart: always
 
 networks:
   monitoring:
