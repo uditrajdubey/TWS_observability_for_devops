@@ -64,6 +64,21 @@ services:
     networks:
       - monitoring
     restart: always
+
+
+  # --- Logs ---
+  loki:
+    image: grafana/loki:3.7.9
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki/loki-config.yml:/etc/loki/config.yaml:ro
+      - loki_data:/loki
+    command: -config.file=/etc/loki/config.yaml
+    networks:
+      - monitoring
+    restart: always    
     
    # --- OpenTelemetry Collector: receives all telemetry, routes it to the right backend ---
 
@@ -82,7 +97,6 @@ services:
       - 8888          # the Collector's own metrics (Prometheus scrapes here)
     depends_on:
       - loki
-      - tempo
     networks:
       - monitoring
     restart: always
